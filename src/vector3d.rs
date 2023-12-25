@@ -115,7 +115,7 @@ impl DivAssign<f64> for Vector3D {
 // Vector Utility Functions
 
 // Alias for future convenience
-type Point3D = Vector3D;
+pub type Point3D = Vector3D;
 
 impl fmt::Display for Vector3D {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
