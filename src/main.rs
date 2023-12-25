@@ -32,7 +32,7 @@ fn main() {
 
     // Calculate the vectors across the horizontal and down the vertical viewport edges.
     let viewport_u: Vector3D = Vector3D::with_values(viewport_width, 0.0, 0.0);
-    let viewport_v: Vector3D = Vector3D::with_values(0.0, -viewport_width, 0.0);
+    let viewport_v: Vector3D = Vector3D::with_values(0.0, -viewport_height, 0.0);
 
     // Calculate the horizontal and vertical delta vectors from pixel to pixel
     let pixel_Δu: Vector3D = viewport_u / f64::from(image_width);
