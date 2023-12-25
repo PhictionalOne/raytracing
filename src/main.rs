@@ -7,7 +7,19 @@ pub mod color;
 pub mod ray;
 pub mod vector3d;
 
+fn hit_sphere(center: Point3D, radius: f64, r: Ray) -> bool {
+    let oc: Vector3D = r.origin() - center;
+    let a: f64 = r.direction().dot(r.direction());
+    let b: f64 = 2.0 * oc.dot(r.direction());
+    let c: f64 = oc.dot(oc) - radius * radius;
+    let discriminant: f64 = b * b - 4.0 * a * c;
+    discriminant >= 0.0
+}
+
 fn ray_color(r: Ray) -> Color {
+    if hit_sphere(Point3D::with_values(0.0, 0.0, -1.0), 0.5, r) {
+        return Color::with_values(1.0, 0.0, 0.0);
+    }
     let unit_direction: Vector3D = r.direction().unit_vector();
     let a: f64 = 0.5 * unit_direction.y() + 1.0;
     (1.0 - a) * Color::with_values(1.0, 1.0, 1.0) + a * Color::with_values(0.5, 0.7, 1.0)
