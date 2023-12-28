@@ -19,6 +19,7 @@ This project serves as a practical exercise to achieve the following learning ob
 2. **Unit Tests:** Develop and apply unit tests to ensure the correctness of individual components.
 3. **Integration Tests:** Implement integration tests to verify the functionality of the complete ray tracing system.
 4. **GitHub Actions:** Utilize GitHub Actions for continuous integration to automate testing processes.
+5. **Rust Documentation:** Comment modules, structs and functions using Rust Docstrings for automatic API documentation.
 
 ## Usage
 
@@ -37,6 +38,22 @@ Unit and integration tests are available to ensure the correctness and reliabili
 ```bash
 cargo test
 ```
+
+## Documentation
+
+### Generating Documentation
+
+To generate documentation for this project, you can use `cargo doc`. Make sure you have Rust and Cargo installed. Run the following command in the project directory:
+
+```bash
+cargo doc --open
+```
+
+The `--open` flag opens the documentation in your default web browser after the generation is complete.
+
+### Viewing Documentation
+
+After running the cargo doc command, you can navigate to the `target/doc` directory and open the `index.html` file in your browser. Alternatively, the `--open` flag will automatically open the documentation for you.
 
 ## Continuous Integration
 

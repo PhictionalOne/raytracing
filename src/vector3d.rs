@@ -1,6 +1,9 @@
+//! Module for representing 3D vectors in the context of a raytracer.
+
 use std::fmt;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub};
 
+/// Represents a 3D vector with components `x`, `y`, and `z`.
 #[derive(Debug, Clone, Copy)]
 pub struct Vector3D {
     x: f64,
@@ -9,7 +12,7 @@ pub struct Vector3D {
 }
 
 impl Vector3D {
-    // Default constructor
+    /// Creates a new vector with components initialized to zero.
     pub fn new() -> Self {
         Vector3D {
             x: 0.0,
@@ -18,38 +21,62 @@ impl Vector3D {
         }
     }
 
-    // Constructor with specific values
+    /// Creates a new vector with specified values for `x`, `y`, and `z`.
+    ///
+    /// # Arguments
+    ///
+    /// * `x` - The x-component of the vector.
+    /// * `y` - The y-component of the vector.
+    /// * `z` - The z-component of the vector.
     pub fn with_values(x: f64, y: f64, z: f64) -> Self {
         Vector3D { x, y, z }
     }
 
     // Getters
+
+    /// Gets the x-component of the vector.
     pub const fn x(self) -> f64 {
         self.x
     }
 
+    /// Gets the y-component of the vector.
     pub const fn y(self) -> f64 {
         self.y
     }
 
+    /// Gets the z-component of the vector.
     pub const fn z(self) -> f64 {
         self.z
     }
 
     // Length
+
+    /// Calculates the length of the vector.
     pub fn length(self) -> f64 {
         self.length_squared().sqrt()
     }
 
+    /// Calculates the squared length of the vector.
     pub fn length_squared(self) -> f64 {
         self.x * self.x + self.y * self.y + self.z * self.z
     }
 
     // Products
+
+    /// Calculates the dot product of the vector with another vector.
+    ///
+    /// # Arguments
+    ///
+    /// * `other` - The other vector for dot product calculation.
     pub fn dot(self, other: Vector3D) -> f64 {
         self.x * other.x + self.y * other.y + self.z * other.z
     }
 
+    /// Calculates the cross product of the vector with another vector.
+    ///
+    /// # Arguments
+    ///
+    /// * `other` - The other vector for cross product calculation.
     pub fn cross(self, other: Vector3D) -> Vector3D {
         Vector3D {
             x: self.y * other.z - self.z * other.y,
@@ -58,7 +85,7 @@ impl Vector3D {
         }
     }
 
-    // Unit Vector, normalized by its length
+    /// Returns a unit vector in the direction of the original vector.
     pub fn unit_vector(self) -> Vector3D {
         self / self.length()
     }
@@ -114,7 +141,7 @@ impl DivAssign<f64> for Vector3D {
 
 // Vector Utility Functions
 
-// Alias for future convenience
+/// Alias for a 3D point represented as a vector.
 pub type Point3D = Vector3D;
 
 impl fmt::Display for Vector3D {
@@ -212,7 +239,7 @@ mod tests {
     };
 
     #[test]
-    fn negation_ok() {
+    fn negation() {
         assert_eq!(
             -V_123,
             Vector3D {
@@ -240,7 +267,7 @@ mod tests {
     }
 
     #[test]
-    fn add_assign_ok() {
+    fn add_assign() {
         let mut v = Vector3D::new();
         v += V_X;
         v += V_Y;
@@ -249,25 +276,25 @@ mod tests {
     }
 
     #[test]
-    fn add_ok() {
+    fn add() {
         assert_eq!(V_X + V_Y + V_Z, V_ONE);
         assert_eq!(V_X + 2.0 * V_Y + 3.0 * V_Z, V_123);
     }
 
     #[test]
-    fn sub_ok() {
+    fn sub() {
         assert_eq!(V_ONE - V_X - V_Y - V_Z, Vector3D::new());
     }
 
     #[test]
-    fn mul_assign_ok() {
+    fn mul_assign() {
         let mut v = V_ONE;
         v *= 2.0;
         assert_eq!(v, V_TWO);
     }
 
     #[test]
-    fn mul_ok() {
+    fn mul() {
         // v * v'
         assert_eq!(V_123 * V_ONE, V_123);
 
@@ -279,32 +306,32 @@ mod tests {
     }
 
     #[test]
-    fn div_assign_ok() {
+    fn div_assign() {
         let mut v = V_TWO;
         v /= 2.0;
         assert_eq!(v, V_ONE);
     }
 
     #[test]
-    fn div_ok() {
+    fn div() {
         assert_eq!(V_TWO / 2.0, V_ONE);
     }
 
     #[test]
-    fn length_ok() {
+    fn length() {
         assert_eq!(V_X.length(), 1.0);
         assert_eq!(V_Y.length(), 1.0);
         assert_eq!(V_Z.length(), 1.0);
     }
 
     #[test]
-    fn dot_ok() {
+    fn dot_product() {
         assert_eq!(V_123.dot(V_RND), 6.0);
         assert_eq!(V_TWO.dot(V_TWO), 12.0);
     }
 
     #[test]
-    fn cross_ok() {
+    fn cross_product() {
         assert_eq!(V_ONE.cross(V_ONE), Vector3D::new());
     }
 }
