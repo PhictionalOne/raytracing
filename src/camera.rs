@@ -6,12 +6,14 @@ use crate::hittable::{HitRecord, Hittable};
 use crate::interval::{Interval, EMPTY, UNIVERSE};
 use crate::ray::Ray;
 use crate::vector3d::{Point3D, Vector3D};
+use rand::prelude::*;
 use std::io::Write;
 
 /// Represents a camera in a 3D scene.
 pub struct Camera {
     aspect_ratio: f64,
     image_width: u16,
+    samples_per_pixel: u16,
     image_height: u16,
     center: Point3D,
     pixel00_loc: Point3D,
@@ -42,7 +44,7 @@ impl Camera {
     /// let camera = Camera::default();
     /// ```
     pub fn default() -> Self {
-        Self::new(1.0, 100)
+        Self::new(1.0, 100, 1)
     }
 
     /// Creates a new `Camera` with the specified aspect ratio and image width,
@@ -71,10 +73,11 @@ impl Camera {
     /// // Create a camera with a 16:9 aspect ratio and 800 pixels width, with initialized settings.
     /// let camera = Camera::new(16.0 / 9.0, 800);
     /// ```
-    pub fn new(aspect_ratio: f64, image_width: u16) -> Self {
+    pub fn new(aspect_ratio: f64, image_width: u16, samples_per_pixel: u16) -> Self {
         let mut cam: Camera = Camera {
             aspect_ratio: aspect_ratio,
             image_width: image_width,
+            samples_per_pixel: samples_per_pixel,
             image_height: 0,
             center: Point3D::new(),
             pixel00_loc: Point3D::new(),
@@ -130,6 +133,25 @@ impl Camera {
         (1.0 - a) * Color::with_values(1.0, 1.0, 1.0) + a * Color::with_values(0.5, 0.7, 1.0)
     }
 
+    /// Get a randomly sampled camera ray for the pixel at location i,j.
+    fn ray(&self, i: u16, j: u16) -> Ray {
+        let pixel_center =
+            self.pixel00_loc + (f64::from(i) * self.pixel_Δu) + (f64::from(j) * self.pixel_Δv);
+        let pixel_sample = pixel_center + self.pixel_sample_square();
+
+        Ray::create(self.center, pixel_sample - self.center)
+    }
+
+    /// Returns a random point in the square surrounding a pixel at the origin.
+    fn pixel_sample_square(&self) -> Vector3D {
+        let mut rng = rand::thread_rng();
+
+        let px: f64 = -0.5 + rng.gen::<f64>();
+        let py: f64 = -0.5 + rng.gen::<f64>();
+
+        (px * self.pixel_Δu) + (py * self.pixel_Δv)
+    }
+
     /// Renders the scene using the camera and provided world geometry.
     pub fn render(&mut self, world: &HittableList) {
         let mut buffer = Vec::new();
@@ -147,14 +169,15 @@ impl Camera {
             eprint!("\x1B[2J\x1B[1;1H"); // Clear output
 
             for i in 0..self.image_width {
-                let _pixel_center: Point3D = self.pixel00_loc
-                    + (f64::from(i) * self.pixel_Δu)
-                    + (f64::from(j) * self.pixel_Δv);
-                let _ray_direction: Vector3D = _pixel_center - self.center;
-                let _r: Ray = Ray::create(self.center, _ray_direction);
+                let mut pixel_color: Color = Color::new();
 
-                Self::ray_color(&_r, &world)
-                    .write(&mut buffer)
+                for sample in 0..self.samples_per_pixel {
+                    let r: Ray = self.ray(i, j);
+                    pixel_color += Self::ray_color(&r, &world);
+                }
+
+                pixel_color
+                    .write(&mut buffer, self.samples_per_pixel)
                     .expect("Failed to write color");
             }
         }
