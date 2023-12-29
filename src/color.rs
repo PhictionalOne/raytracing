@@ -29,15 +29,25 @@ impl Color {
         g *= scale;
         b *= scale;
 
+        // Apply the linear to gamma transform
+        r = Self::linear_to_gamma(r);
+        g = Self::linear_to_gamma(g);
+        b = Self::linear_to_gamma(b);
+
         // Write the translated [0, 255] value of each color component.
         let interval = Interval::new(0.000, 0.999);
         write!(
             out,
             "{} {} {}\n",
-            (256.0 * interval.clamp(r)) as u8,
-            (256.0 * interval.clamp(g)) as u8,
-            (256.0 * interval.clamp(b)) as u8,
+            (255.999 * interval.clamp(r)) as u8,
+            (255.999 * interval.clamp(g)) as u8,
+            (255.999 * interval.clamp(b)) as u8,
         )
+    }
+
+    /// Convert from linear color space into gamma color space.
+    fn linear_to_gamma(linear_component: f64) -> f64 {
+        linear_component.sqrt()
     }
 }
 

@@ -31,6 +31,7 @@ fn main() {
         16.0 / 9.0, // aspect_ratio
         400,        // image_width
         100,        // samples_per_pixel
+        50,         // max_depth
     );
 
     cam.render(&world);

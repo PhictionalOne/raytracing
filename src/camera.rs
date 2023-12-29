@@ -14,6 +14,7 @@ pub struct Camera {
     aspect_ratio: f64,
     image_width: u16,
     samples_per_pixel: u16,
+    max_depth: u16,
     image_height: u16,
     center: Point3D,
     pixel00_loc: Point3D,
@@ -44,7 +45,7 @@ impl Camera {
     /// let camera = Camera::default();
     /// ```
     pub fn default() -> Self {
-        Self::new(1.0, 100, 1)
+        Self::new(1.0, 100, 10, 10)
     }
 
     /// Creates a new `Camera` with the specified aspect ratio and image width,
@@ -58,8 +59,10 @@ impl Camera {
     ///
     /// # Arguments
     ///
-    /// * `aspect_ratio` - The aspect ratio of the camera, defining the width-to-height ratio of the image.
-    /// * `image_width` - The width of the image in pixels.
+    /// * `aspect_ratio`      - The aspect ratio of the camera, defining the width-to-height ratio of the image.
+    /// * `image_width`       - The width of the image in pixels.
+    /// * `samples_per_pixel` - How many samples there should be for one pixel
+    /// * `max_depth`         - How many rays should scatter
     ///
     /// # Returns
     ///
@@ -73,11 +76,17 @@ impl Camera {
     /// // Create a camera with a 16:9 aspect ratio and 800 pixels width, with initialized settings.
     /// let camera = Camera::new(16.0 / 9.0, 800);
     /// ```
-    pub fn new(aspect_ratio: f64, image_width: u16, samples_per_pixel: u16) -> Self {
+    pub fn new(
+        aspect_ratio: f64,
+        image_width: u16,
+        samples_per_pixel: u16,
+        max_depth: u16,
+    ) -> Self {
         let mut cam: Camera = Camera {
             aspect_ratio: aspect_ratio,
             image_width: image_width,
             samples_per_pixel: samples_per_pixel,
+            max_depth: max_depth,
             image_height: 0,
             center: Point3D::new(),
             pixel00_loc: Point3D::new(),
@@ -122,14 +131,21 @@ impl Camera {
     }
 
     /// Computes the color of a ray using the provided hit record and world geometry.
-    fn ray_color(r: &Ray, world: &HittableList) -> Color {
+    fn ray_color(r: &Ray, depth: u16, world: &HittableList) -> Color {
+        // If we've exceeded the ray bounce limit, no more light is gathered.
+        if depth <= 0 {
+            return Color::new();
+        }
+
         let mut rec = HitRecord::default();
-        if world.hit(r, Interval::new(0.0, f64::INFINITY), &mut rec) {
-            return 0.5 * (rec.normal() + Color::with_values(1.0, 1.0, 1.0));
+
+        if world.hit(r, Interval::new(0.001, f64::INFINITY), &mut rec) {
+            let direction = rec.normal() + Vector3D::random_unit_vector();
+            return 0.5 * Self::ray_color(&Ray::create(rec.p(), direction), depth - 1, world);
         }
 
         let unit_direction: &Vector3D = &r.direction().unit_vector();
-        let a: f64 = 0.5 * unit_direction.y() + 1.0;
+        let a: f64 = 0.5 * (unit_direction.y() + 1.0);
         (1.0 - a) * Color::with_values(1.0, 1.0, 1.0) + a * Color::with_values(0.5, 0.7, 1.0)
     }
 
@@ -173,7 +189,7 @@ impl Camera {
 
                 for sample in 0..self.samples_per_pixel {
                     let r: Ray = self.ray(i, j);
-                    pixel_color += Self::ray_color(&r, &world);
+                    pixel_color += Self::ray_color(&r, self.max_depth, &world);
                 }
 
                 pixel_color
@@ -183,5 +199,14 @@ impl Camera {
         }
         println!("{}", String::from_utf8_lossy(&buffer));
         eprintln!("Done.");
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    #[should_panic]
+    fn todo() {
+        assert!(false, "No tests implemented");
     }
 }
