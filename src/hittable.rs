@@ -263,7 +263,6 @@ pub mod sphere {
     mod tests {
         use crate::hittable::sphere::*;
         use crate::hittable::{HitRecord, Hittable};
-        use crate::interval::*;
         use crate::ray::Ray;
         use crate::vector3d::{Point3D, Vector3D};
 
