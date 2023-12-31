@@ -39,7 +39,7 @@ impl Camera {
     /// # Examples
     ///
     /// ```
-    /// use your_project::camera::Camera;
+    /// use raytracer::camera::Camera;
     ///
     /// // Create a default camera with initialized settings.
     /// let camera = Camera::default();
@@ -71,10 +71,10 @@ impl Camera {
     /// # Examples
     ///
     /// ```
-    /// use your_project::camera::Camera;
+    /// use raytracer::camera::Camera;
     ///
     /// // Create a camera with a 16:9 aspect ratio and 800 pixels width, with initialized settings.
-    /// let camera = Camera::new(16.0 / 9.0, 800);
+    /// let camera = Camera::new(16.0 / 9.0, 800, 100, 50);
     /// ```
     pub fn new(
         aspect_ratio: f64,
@@ -207,6 +207,6 @@ mod tests {
     #[test]
     #[should_panic]
     fn todo() {
-        assert!(false, "No tests implemented");
+        todo!();
     }
 }

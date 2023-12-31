@@ -23,10 +23,11 @@ This project serves as a practical exercise to achieve the following learning ob
 
 ## Usage
 
-To generate an image using the ray tracer, run the main application:
+To generate an image using the ray tracer, run the example application:
 
 ```bash
-cargo run
+cd examples/balls
+cargo run > image.ppm
 ```
 
 This will produce the output image based on the implemented ray tracing algorithm.

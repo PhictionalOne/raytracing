@@ -1,15 +1,10 @@
-use crate::camera::Camera;
-use crate::hittable::hittables::*;
-use crate::hittable::sphere::*;
-use crate::vector3d::*;
+use raytracer::*;
+use raytracer::hittable::hittables::*;
+use raytracer::hittable::sphere::*;
+use raytracer::hittable::*;
+use raytracer::vector3d::*;
+use raytracer::camera::*;
 use std::rc::Rc;
-
-pub mod camera;
-pub mod color;
-pub mod hittable;
-pub mod interval;
-pub mod ray;
-pub mod vector3d;
 
 fn main() {
     // World
