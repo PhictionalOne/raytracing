@@ -1,5 +1,6 @@
 //! Module for representing 3D vectors in the context of a raytracer.
 
+use nalgebra::{Point3, Vector3};
 use rand::prelude::*;
 use std::fmt;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub};
